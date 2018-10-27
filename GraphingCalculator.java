@@ -9,6 +9,9 @@ import javax.swing.UIManager;
 
 public class GraphingCalculator extends javax.swing.JFrame {
 
+    int xscale = 1;
+    int yscale = 1;
+            
     private String whichNumber = "firstNumber";
     private String buttonClick = "number";
     private String operation = "";
@@ -50,17 +53,22 @@ public class GraphingCalculator extends javax.swing.JFrame {
     
     public void setGraph() {
         try {
-
+            
             Graphics g = graph.getGraphics();
             graph.update(g);
 
-            g.setColor(Color.GRAY);
+            g.setColor(Color.LIGHT_GRAY);
+            for(int y=0; y<260; y+=10) {
+                g.drawLine(0, y, 360, y);
+            }
+            for(int x=0; x<360; x+=10) {
+                g.drawLine(x, 0, x, 260);
+            }
+
+            g.setColor(Color.BLACK);
             g.drawLine(0, 130, 360, 130);
             g.drawLine(180, 0, 180, 260);
 
-            int xscale = 1;
-            int yscale = 1;
-            
             g.setColor(Color.RED);
 
             for(int x=-180; x<180; x++) {
@@ -69,8 +77,10 @@ public class GraphingCalculator extends javax.swing.JFrame {
                 Interpreter interpreter = new Interpreter();
 
                 interpreter.set("x", x);
-                interpreter.eval("y=" + graphing);
+                //System.out.println("y=" + graphing);
 
+                interpreter.eval("y=" + graphing);
+                
                 try {
                     y = -1 * ((double) interpreter.get("y") / yscale) + 130;
                 } catch(Exception e) {
@@ -79,7 +89,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
                 g.drawRect(x/xscale + 180, (int) y, 1, 1);
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -542,7 +552,45 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
         
-        graphing = jtxtDisplay.getText();
+        xscale = 1;
+        yscale = 1;
+        
+        String g = jtxtDisplay.getText();
+        
+        int charPos = 0;
+        int strLength = g.length();
+        
+        do {
+            strLength = g.length();
+            try {
+                if(g.substring(charPos,charPos+1).equals("x")) {
+                    if(g.substring(charPos+1,charPos+2).equals("^")) {
+                        int cPos = charPos;
+                        int sLen = strLength;
+                        boolean fallout = false;
+                        do {
+                            try {
+                                if(g.substring(cPos+2,cPos+3).equals(" ")) {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
+                                    fallout = true;
+                                }
+                            } catch(Exception e) {
+                            }
+                            cPos++;
+                        } while(cPos < sLen && !fallout);
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            charPos++;
+        } while(charPos < strLength);
+        
+        graphing = g;
 
         setGraph();
     }//GEN-LAST:event_jButton20ActionPerformed
