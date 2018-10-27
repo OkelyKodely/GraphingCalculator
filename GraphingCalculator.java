@@ -1,16 +1,17 @@
 import bsh.Interpreter;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import java.awt.Font;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 public class GraphingCalculator extends javax.swing.JFrame {
 
-    int xscale = 1;
-    int yscale = 1;
+    double x = 0;
+    double y = 0;
+    
+    double xscale = 1;
+    double yscale = 1;
             
     private String whichNumber = "firstNumber";
     private String buttonClick = "number";
@@ -57,12 +58,23 @@ public class GraphingCalculator extends javax.swing.JFrame {
             Graphics g = graph.getGraphics();
             graph.update(g);
 
-            g.setColor(Color.LIGHT_GRAY);
             for(int y=0; y<260; y+=10) {
+                g.setColor(Color.LIGHT_GRAY);
                 g.drawLine(0, y, 360, y);
+                if(y%20==0) {
+                    g.setColor(Color.BLACK);
+                    g.setFont(new Font("arial", Font.PLAIN, 8));
+                    g.drawString(((y-130)*yscale+this.y) + "", 180, y);
+                }
             }
             for(int x=0; x<360; x+=10) {
+                g.setColor(Color.LIGHT_GRAY);
                 g.drawLine(x, 0, x, 260);
+                if(x%20==0) {
+                    g.setColor(Color.BLACK);
+                    g.setFont(new Font("arial", Font.PLAIN, 8));
+                    g.drawString(((x-180)*xscale+this.x) + "", x, 130);
+                }
             }
 
             g.setColor(Color.BLACK);
@@ -71,7 +83,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
             g.setColor(Color.RED);
 
-            for(int x=-180; x<180; x++) {
+            for(int x=-1800; x<1800; x++) {
 
                 double y;
                 Interpreter interpreter = new Interpreter();
@@ -86,7 +98,23 @@ public class GraphingCalculator extends javax.swing.JFrame {
                 } catch(Exception e) {
                     y = -1 * ((int) interpreter.get("y") / yscale) + 130;
                 }
-                g.drawRect(x/xscale + 180, (int) y, 1, 1);
+                int currX = (int)(x/xscale) + 180 + (int)this.x;
+                int currY = (int) y - (int)this.y;
+                g.drawRect(currX, currY, 1, 1);
+
+                interpreter.set("x", x - 1);
+
+                interpreter.eval("y=" + graphing);
+                
+                try {
+                    y = -1 * ((double) interpreter.get("y") / yscale) + 130;
+                } catch(Exception e) {
+                    y = -1 * ((int) interpreter.get("y") / yscale) + 130;
+                }
+
+                int prevX = (int)((x-1)/xscale) + 180 + (int)this.x;
+                int prevY = (int) y - (int)this.y;
+                g.drawLine(prevX, prevY, currX, currY);
             }
         } catch(Exception e) {
             //e.printStackTrace();
@@ -135,6 +163,12 @@ public class GraphingCalculator extends javax.swing.JFrame {
         jButton30 = new javax.swing.JButton();
         graph = new javax.swing.JPanel();
         jButton31 = new javax.swing.JButton();
+        jButton32 = new javax.swing.JButton();
+        jButton33 = new javax.swing.JButton();
+        jButton34 = new javax.swing.JButton();
+        jButton35 = new javax.swing.JButton();
+        jButton36 = new javax.swing.JButton();
+        jButton37 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("OkelyKodely's Calculator");
@@ -147,7 +181,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         jtxtDisplay.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         getContentPane().add(jtxtDisplay, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 420, 50));
 
-        jButton1.setBackground(new java.awt.Color(153, 204, 255));
+        jButton1.setBackground(java.awt.Color.darkGray);
         jButton1.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("+");
@@ -180,7 +214,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 70, 60, 50));
 
-        jButton4.setBackground(new java.awt.Color(153, 204, 255));
+        jButton4.setBackground(java.awt.Color.darkGray);
         jButton4.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("%");
@@ -224,7 +258,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 130, 60, 50));
 
-        jButton8.setBackground(new java.awt.Color(153, 204, 255));
+        jButton8.setBackground(java.awt.Color.darkGray);
         jButton8.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
         jButton8.setForeground(new java.awt.Color(255, 255, 255));
         jButton8.setText("-");
@@ -268,7 +302,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 60, 50));
 
-        jButton12.setBackground(new java.awt.Color(153, 204, 255));
+        jButton12.setBackground(java.awt.Color.darkGray);
         jButton12.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
         jButton12.setForeground(new java.awt.Color(255, 255, 255));
         jButton12.setText("*");
@@ -312,7 +346,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton15, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 250, 60, 50));
 
-        jButton16.setBackground(new java.awt.Color(153, 204, 255));
+        jButton16.setBackground(java.awt.Color.darkGray);
         jButton16.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
         jButton16.setForeground(new java.awt.Color(255, 255, 255));
         jButton16.setText("/");
@@ -364,9 +398,9 @@ public class GraphingCalculator extends javax.swing.JFrame {
                 jButton20ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton20, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 280, 90, 50));
+        getContentPane().add(jButton20, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 280, 90, 40));
 
-        jButton21.setBackground(new java.awt.Color(153, 204, 255));
+        jButton21.setBackground(java.awt.Color.darkGray);
         jButton21.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton21.setForeground(new java.awt.Color(255, 255, 255));
         jButton21.setText("sin");
@@ -377,7 +411,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton21, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 70, 60, 50));
 
-        jButton22.setBackground(new java.awt.Color(153, 204, 255));
+        jButton22.setBackground(java.awt.Color.darkGray);
         jButton22.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton22.setForeground(new java.awt.Color(255, 255, 255));
         jButton22.setText("asin");
@@ -388,7 +422,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton22, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, 60, 50));
 
-        jButton23.setBackground(new java.awt.Color(153, 204, 255));
+        jButton23.setBackground(java.awt.Color.darkGray);
         jButton23.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton23.setForeground(new java.awt.Color(255, 255, 255));
         jButton23.setText("tan");
@@ -399,7 +433,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton23, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, 60, 50));
 
-        jButton24.setBackground(new java.awt.Color(153, 204, 255));
+        jButton24.setBackground(java.awt.Color.darkGray);
         jButton24.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton24.setForeground(new java.awt.Color(255, 255, 255));
         jButton24.setText("cos");
@@ -410,7 +444,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton24, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 60, 50));
 
-        jButton25.setBackground(new java.awt.Color(153, 204, 255));
+        jButton25.setBackground(java.awt.Color.darkGray);
         jButton25.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton25.setForeground(new java.awt.Color(255, 255, 255));
         jButton25.setText("atan");
@@ -421,7 +455,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 60, 50));
 
-        jButton26.setBackground(new java.awt.Color(153, 204, 255));
+        jButton26.setBackground(java.awt.Color.darkGray);
         jButton26.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton26.setForeground(new java.awt.Color(255, 255, 255));
         jButton26.setText("x^y");
@@ -432,7 +466,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton26, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 250, 60, 50));
 
-        jButton27.setBackground(new java.awt.Color(153, 204, 255));
+        jButton27.setBackground(java.awt.Color.darkGray);
         jButton27.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton27.setForeground(new java.awt.Color(255, 255, 255));
         jButton27.setText("√x");
@@ -443,7 +477,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton27, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 190, 60, 50));
 
-        jButton28.setBackground(new java.awt.Color(153, 204, 255));
+        jButton28.setBackground(java.awt.Color.darkGray);
         jButton28.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton28.setForeground(new java.awt.Color(255, 255, 255));
         jButton28.setText("acos");
@@ -454,7 +488,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton28, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 70, 60, 50));
 
-        jButton29.setBackground(new java.awt.Color(153, 204, 255));
+        jButton29.setBackground(java.awt.Color.darkGray);
         jButton29.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton29.setForeground(new java.awt.Color(255, 255, 255));
         jButton29.setText("1/x");
@@ -465,7 +499,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton29, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 310, 60, 50));
 
-        jButton30.setBackground(new java.awt.Color(153, 204, 255));
+        jButton30.setBackground(java.awt.Color.darkGray);
         jButton30.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton30.setForeground(new java.awt.Color(255, 255, 255));
         jButton30.setText("log");
@@ -476,8 +510,8 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton30, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 310, 60, 50));
 
-        graph.setBackground(new java.awt.Color(255, 255, 255));
-        graph.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        graph.setBackground(new java.awt.Color(225, 225, 225));
+        graph.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         graph.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(graph, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 10, 360, 260));
 
@@ -490,6 +524,54 @@ public class GraphingCalculator extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jButton31, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 310, 60, 50));
+
+        jButton32.setText("zoom out");
+        jButton32.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton32ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton32, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 290, -1, -1));
+
+        jButton33.setText("zoom in");
+        jButton33.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton33ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton33, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 290, -1, -1));
+
+        jButton34.setText("v");
+        jButton34.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton34ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton34, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 370, 50, 20));
+
+        jButton35.setText("<");
+        jButton35.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton35ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton35, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 350, 50, 20));
+
+        jButton36.setText(">");
+        jButton36.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton36ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton36, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 350, 50, 20));
+
+        jButton37.setText("^");
+        jButton37.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton37ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton37, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 330, 50, 20));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -551,6 +633,9 @@ public class GraphingCalculator extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
+
+        this.x = 0;
+        this.y = 0;
         
         xscale = 1;
         yscale = 1;
@@ -578,14 +663,23 @@ public class GraphingCalculator extends javax.swing.JFrame {
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
                                     fallout = true;
                                 }
-                            } catch(Exception e) {
+                            } catch(Exception e1) {
+                                try {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
+                                    fallout = true;
+                                } catch(Exception e2) {
+                                }
                             }
                             cPos++;
                         } while(cPos < sLen && !fallout);
                     }
                 }
             } catch(Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             charPos++;
         } while(charPos < strLength);
@@ -993,12 +1087,200 @@ public class GraphingCalculator extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton31ActionPerformed
 
+    private void jButton33ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton33ActionPerformed
+
+        xscale /= 2;
+        yscale /= 2;
+        
+        String g = jtxtDisplay.getText();
+        
+        int charPos = 0;
+        int strLength = g.length();
+        
+        do {
+            strLength = g.length();
+            try {
+                if(g.substring(charPos,charPos+1).equals("x")) {
+                    if(g.substring(charPos+1,charPos+2).equals("^")) {
+                        int cPos = charPos;
+                        int sLen = strLength;
+                        boolean fallout = false;
+                        do {
+                            try {
+                                if(g.substring(cPos+2,cPos+3).equals(" ")) {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
+                                    fallout = true;
+                                }
+                            } catch(Exception e1) {
+                                try {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
+                                    fallout = true;
+                                } catch(Exception e2) {
+                                }
+                            }
+                            cPos++;
+                        } while(cPos < sLen && !fallout);
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            charPos++;
+        } while(charPos < strLength);
+        
+        graphing = g;
+
+        setGraph();
+    }//GEN-LAST:event_jButton33ActionPerformed
+
+    private void jButton32ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton32ActionPerformed
+        
+        xscale *= 2;
+        yscale *= 2;
+        
+        String g = jtxtDisplay.getText();
+        
+        int charPos = 0;
+        int strLength = g.length();
+        
+        do {
+            strLength = g.length();
+            try {
+                if(g.substring(charPos,charPos+1).equals("x")) {
+                    if(g.substring(charPos+1,charPos+2).equals("^")) {
+                        int cPos = charPos;
+                        int sLen = strLength;
+                        boolean fallout = false;
+                        do {
+                            try {
+                                if(g.substring(cPos+2,cPos+3).equals(" ")) {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
+                                    fallout = true;
+                                }
+                            } catch(Exception e1) {
+                                try {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
+                                    fallout = true;
+                                } catch(Exception e2) {
+                                }
+                            }
+                            cPos++;
+                        } while(cPos < sLen && !fallout);
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            charPos++;
+        } while(charPos < strLength);
+        
+        graphing = g;
+
+        setGraph();
+    }//GEN-LAST:event_jButton32ActionPerformed
+
+    private void jButton37ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton37ActionPerformed
+
+        this.y -= yscale * 5;
+        
+        dograph();
+    }//GEN-LAST:event_jButton37ActionPerformed
+
+    private void jButton34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton34ActionPerformed
+
+        this.y += yscale * 5;
+        
+        dograph();
+
+    }//GEN-LAST:event_jButton34ActionPerformed
+
+    private void jButton35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton35ActionPerformed
+
+        this.x += xscale * 15;
+        
+        dograph();
+
+    }//GEN-LAST:event_jButton35ActionPerformed
+
+    private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
+
+        this.x -= xscale * 15;
+        
+        dograph();
+    }//GEN-LAST:event_jButton36ActionPerformed
+
+    private void dograph() {
+
+        String g = jtxtDisplay.getText();
+        
+        int charPos = 0;
+        int strLength = g.length();
+        
+        do {
+            strLength = g.length();
+            try {
+                if(g.substring(charPos,charPos+1).equals("x")) {
+                    if(g.substring(charPos+1,charPos+2).equals("^")) {
+                        int cPos = charPos;
+                        int sLen = strLength;
+                        boolean fallout = false;
+                        do {
+                            try {
+                                if(g.substring(cPos+2,cPos+3).equals(" ")) {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
+                                    fallout = true;
+                                }
+                            } catch(Exception e1) {
+                                try {
+                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
+                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
+//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
+                                    }
+                                    g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
+                                    fallout = true;
+                                } catch(Exception e2) {
+                                }
+                            }
+                            cPos++;
+                        } while(cPos < sLen && !fallout);
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            charPos++;
+        } while(charPos < strLength);
+        
+        graphing = g;
+
+        setGraph();
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         
-        /* For round buttons.. */
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
@@ -1006,7 +1288,6 @@ public class GraphingCalculator extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GraphingCalculator().setVisible(true);
@@ -1041,6 +1322,12 @@ public class GraphingCalculator extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton30;
     private javax.swing.JButton jButton31;
+    private javax.swing.JButton jButton32;
+    private javax.swing.JButton jButton33;
+    private javax.swing.JButton jButton34;
+    private javax.swing.JButton jButton35;
+    private javax.swing.JButton jButton36;
+    private javax.swing.JButton jButton37;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
